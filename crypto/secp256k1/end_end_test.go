@@ -15,6 +15,7 @@
 package secp256k1
 
 import (
+	"crypto/sha256"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -69,7 +70,8 @@ func TestSignVerify(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			gotSig, err := tc.signedBy.Sign(tc.message)
+			hash := sha256.Sum256(tc.message)
+			gotSig, err := tc.signedBy.Sign(hash[:])
 			assert.Equal(t, tc.wantErr, err != nil)
 			assert.Equal(t, tc.wantSig, gotSig)
 

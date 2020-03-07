@@ -23,6 +23,6 @@ import (
 
 func main() {
 	if err := commands.Execute(viper.GetViper()); err != nil {
-		log.Fatalln(err)
+		log.Fatalf("%+v\n", err)
 	}
 }

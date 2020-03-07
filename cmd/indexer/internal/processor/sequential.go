@@ -34,8 +34,6 @@ func (s *Sequential) NextBlock(ctx context.Context) error {
 		return err
 	}
 
-	fmt.Println("block number: ", blkNo)
-
 	blk, err := s.blockClient.Get(ctx, blkNo)
 	if err != nil {
 		return err
@@ -47,7 +45,7 @@ func (s *Sequential) NextBlock(ctx context.Context) error {
 
 	nextBlockNo := blkNo + 1
 
-	fmt.Println("next block number: ", nextBlockNo)
+	fmt.Println("completed block number: ", blkNo)
 
 	if err := s.syncStore.PutBlockNumber(ctx, s.protocol, s.network, nextBlockNo); err != nil {
 		return err

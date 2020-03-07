@@ -8,6 +8,6 @@ import (
 
 func main() {
 	if err := commands.Execute(); err != nil {
-		log.Fatalln(err)
+		log.Fatalf("%+v\n", err)
 	}
 }

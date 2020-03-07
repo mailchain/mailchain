@@ -109,7 +109,7 @@ dockers:
     
     image_templates:
     - "mailchain/indexer:latest"
-    - "mailchain/indexer:{{.Version}}"
+    - "mailchain/indexer:v{{.Version}}"
     
     build_flag_templates:
     - "--pull"

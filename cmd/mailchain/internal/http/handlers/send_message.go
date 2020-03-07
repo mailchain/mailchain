@@ -33,6 +33,7 @@ import (
 	"github.com/mailchain/mailchain/internal/mail"
 	"github.com/mailchain/mailchain/internal/mailbox"
 	"github.com/mailchain/mailchain/sender"
+	"github.com/mailchain/mailchain/sender/anysender"
 	"github.com/mailchain/mailchain/stores"
 	"github.com/pkg/errors"
 )
@@ -92,7 +93,7 @@ func SendMessage(sent stores.Sent, senders map[string]sender.Message, ks keystor
 			return
 		}
 
-		signer, err := ks.GetSigner(from, req.Protocol, req.Network, deriveKeyOptions)
+		signer, err := ks.GetSigner(from, req.Protocol, req.Network, signerKind(messageSender), deriveKeyOptions)
 		if err != nil {
 			errs.JSONWriter(w, http.StatusUnprocessableEntity, errors.WithStack(errors.WithMessage(err, "could not get `signer`")))
 			return
@@ -116,6 +117,15 @@ func SendMessage(sent stores.Sent, senders map[string]sender.Message, ks keystor
 		}
 
 		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func signerKind(s sender.Message) string {
+	switch s.(type) {
+	case *anysender.Sender:
+		return "any.sender"
+	default:
+		return ""
 	}
 }
 

@@ -24,7 +24,7 @@ import (
 
 // Store private keys but does not return them, instead return decrypter or signer.
 type Store interface {
-	GetSigner(address []byte, protocol, network string, deriveKeyOptions multi.OptionsBuilders) (signer.Signer, error)
+	GetSigner(address []byte, protocol, network string, kind string, deriveKeyOptions multi.OptionsBuilders) (signer.Signer, error)
 	GetDecrypter(address []byte, protocol, network string, decrypterType byte, deriveKeyOptions multi.OptionsBuilders) (cipher.Decrypter, error)
 	Store(private crypto.PrivateKey, deriveKeyOptions multi.OptionsBuilders) (crypto.PublicKey, error)
 	HasAddress(searchAddress []byte, protocol, network string) bool

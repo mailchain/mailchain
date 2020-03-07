@@ -12,12 +12,13 @@ import (
 func senders(s values.Store) *Senders {
 	return &Senders{
 		clients: map[string]SenderClient{
-			"ethereum-rpc2-" + ethereum.Goerli:  ethereumRPC2Sender(s, ethereum.Goerli),
-			"ethereum-rpc2-" + ethereum.Kovan:   ethereumRPC2Sender(s, ethereum.Kovan),
-			"ethereum-rpc2-" + ethereum.Mainnet: ethereumRPC2Sender(s, ethereum.Mainnet),
-			"ethereum-rpc2-" + ethereum.Rinkeby: ethereumRPC2Sender(s, ethereum.Rinkeby),
-			"ethereum-rpc2-" + ethereum.Ropsten: ethereumRPC2Sender(s, ethereum.Ropsten),
-			protocols.Ethereum + "-relay":       relaySender(s, protocols.Ethereum),
+			"ethereum-rpc2-" + ethereum.Goerli:          ethereumRPC2Sender(s, ethereum.Goerli),
+			"ethereum-rpc2-" + ethereum.Kovan:           ethereumRPC2Sender(s, ethereum.Kovan),
+			"ethereum-rpc2-" + ethereum.Mainnet:         ethereumRPC2Sender(s, ethereum.Mainnet),
+			"ethereum-rpc2-" + ethereum.Rinkeby:         ethereumRPC2Sender(s, ethereum.Rinkeby),
+			"ethereum-rpc2-" + ethereum.Ropsten:         ethereumRPC2Sender(s, ethereum.Ropsten),
+			"ethereum-anydotsender-" + ethereum.Ropsten: anyDotSenderSender(s, "0xe8468689AB8607fF36663EE6522A7A595Ed8bC0C", ethereum.Ropsten),
+			protocols.Ethereum + "-relay":               relaySender(s, protocols.Ethereum),
 		},
 	}
 }

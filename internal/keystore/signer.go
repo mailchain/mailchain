@@ -19,13 +19,17 @@ import (
 	"github.com/mailchain/mailchain/internal/mailbox/signer"
 	"github.com/mailchain/mailchain/internal/protocols"
 	"github.com/mailchain/mailchain/internal/protocols/ethereum"
+	"github.com/mailchain/mailchain/sender/anysender"
 	"github.com/pkg/errors"
 )
 
 // Signer use the correct function to get the decrypter from private key
-func Signer(protocol string, pk crypto.PrivateKey) (signer.Signer, error) {
+func Signer(protocol string, kind string, pk crypto.PrivateKey) (signer.Signer, error) {
 	switch protocol {
 	case protocols.Ethereum:
+		if kind == "any.sender" {
+			return anysender.NewSigner(pk)
+		}
 		return ethereum.NewSigner(pk)
 	default:
 		return nil, errors.Errorf("unsupported signer type")

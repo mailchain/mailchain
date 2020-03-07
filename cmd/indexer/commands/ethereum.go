@@ -145,6 +145,8 @@ func chainConfig(network string) (*params.ChainConfig, error) {
 		return params.MainnetChainConfig, nil
 	case ethereum.Rinkeby:
 		return params.RinkebyChainConfig, nil
+	case ethereum.Ropsten:
+		return params.TestnetChainConfig, nil
 	default:
 		return nil, errors.Errorf("can not determine chain config from network: %s", network)
 	}

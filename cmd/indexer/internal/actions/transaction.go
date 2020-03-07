@@ -21,7 +21,7 @@ type TransactionOptions interface{}
 
 // StoreTransaction saves the raw and processed transaction in the datastores.
 func StoreTransaction(ctx context.Context, txStore datastore.TransactionStore, rawTxStore datastore.RawTransactionStore, protocol, network string, tx *datastore.Transaction, rawTx interface{}) error {
-	if bytes.HasPrefix(tx.Data, encoding.DataPrefix()) {
+	if bytes.Contains(tx.Data, encoding.DataPrefix()) {
 		if err := rawTxStore.PutRawTransaction(ctx, protocol, network, tx.Hash, rawTx); err != nil {
 			return err
 		}

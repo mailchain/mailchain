@@ -52,7 +52,7 @@ func mailchainAddressNameServices(s values.Store) *MailchainAddressNameServices 
 		enabledNetworks = append(enabledNetworks, "ethereum/"+n)
 	}
 	return &MailchainAddressNameServices{
-		BaseURL: values.NewDefaultString("https://ns.mailchain.xyz/", s, "nameservice-address.base-url"),
+		BaseURL: values.NewDefaultString("https://ns.mailchain.xyz/", s, "nameservice-address.mailchain.base-url"),
 		EnabledProtocolNetworks: values.NewDefaultStringSlice(
 			enabledNetworks,
 			s,
