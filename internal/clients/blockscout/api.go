@@ -17,6 +17,7 @@ package blockscout
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -74,9 +75,13 @@ func (c APIClient) getTransactionsByAddress(network string, address []byte) (*tx
 		return nil, errors.WithStack(err)
 	}
 
+	if txListResponse.StatusCode() != http.StatusOK {
+		return nil, errors.Errorf("status: %d body: %s", txListResponse.StatusCode(), string(txListResponse.Body()))
+	}
+
 	txResult := &txList{}
 	if err := json.Unmarshal(txListResponse.Body(), txResult); err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.WithMessage(err, string(txListResponse.Body()))
 	}
 
 	return txResult, nil

@@ -15,17 +15,19 @@
 package blockscout
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/mailchain/mailchain/internal/protocols/ethereum"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,7 +58,7 @@ func TestGetTransactionsByAddress(t *testing.T) {
 		want    *txList
 	}{
 		{
-			"success",
+			"200_success",
 			args{
 				"TestNetwork",
 			},
@@ -108,7 +110,7 @@ func TestGetTransactionsByAddress(t *testing.T) {
 			},
 		},
 		{
-			"err-unsupported-network",
+			"200_err-unsupported-network",
 			args{
 				"UnsupportedNetwork",
 			},
@@ -117,7 +119,7 @@ func TestGetTransactionsByAddress(t *testing.T) {
 			nil,
 		},
 		{
-			"err-get",
+			"200_err-get",
 			args{
 				"TestNetwork",
 			},
@@ -126,11 +128,20 @@ func TestGetTransactionsByAddress(t *testing.T) {
 			&txList{Status: "0", Message: "Invalid address format", Result: []txResult(nil)},
 		},
 		{
-			"err-unmarshal",
+			"200_err-unmarshal",
 			args{
 				"TestNetwork",
 			},
-			errors.New("unexpected end of JSON input"),
+			errors.Errorf(": unexpected end of JSON input"),
+			true,
+			nil,
+		},
+		{
+			"503_err-server",
+			args{
+				"TestNetwork",
+			},
+			errors.New("status: 503 body: 503 Service Unavailable"),
 			true,
 			nil,
 		},
@@ -144,6 +155,8 @@ func TestGetTransactionsByAddress(t *testing.T) {
 			}
 			server := httptest.NewServer(
 				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					status, _ := strconv.Atoi(strings.Split(tt.name, "_")[0])
+					w.WriteHeader(status)
 					w.Write([]byte(golden))
 				}),
 			)
@@ -152,7 +165,7 @@ func TestGetTransactionsByAddress(t *testing.T) {
 				networkConfigs: map[string]networkConfig{"TestNetwork": {url: server.URL}},
 			}
 			got, err := client.getTransactionsByAddress(tt.args.network, []byte{})
-			if (err != nil) && err.Error() != tt.wantErr.Error() {
+			if (err != nil) && !assert.EqualError(t, err, tt.wantErr.Error()) {
 				t.Errorf("APIClient.getTransactionsByAddress() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
